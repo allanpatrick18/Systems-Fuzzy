@@ -10,27 +10,33 @@ def main():
         print("2- Calc interval Of Relance:")
         print("3- Print interval of suport by group:")
         print("4- Print interval of core by group:")
-        value = raw_input()
+        print("5- Print interval of alfa cut:")
+        value = input()
         if (value == str(1)):
-            value = raw_input('The higher:')
-            func = raw_input('Function:')
+            value = input('The height:')
+            func = input('Function:')
             if func == 1:
                 calcRelevance(value)
             else:
-                calcRelevanceTra(value)
+                calcRelevance(value)
 
         if (value == str(2)):
-            func = raw_input('Function:')
+            func = input('Function:')
             if func == 1:
-                calcRelavanceOptionTwo()
+                calcRelavanceOptionTwo(func)
             else:
-                calcRelavanceOptionTwoTra()
+                calcRelavanceOptionTwo(func)
         if (value == str(3)):
-            printInterval()
+        	 func = input('Function:')
+        	 enter = func
+        	 printInterval()
         if (value == str(4)):
-              printCore()
+             group = input('group:')
+             coreBaixo(group )
         if (value == str(5)):
-            alfaCorte(0.8)
+            group = input('group:')
+            alfa = input ('Alfa :')
+            alfaCorte(float(alfa),group)
 
 def calOfRelevenceTriagle(a, m, b, x):
     if (x <= a):
@@ -56,25 +62,25 @@ def calOfRelevenceoftrapeze(a, m, n, b, x):
         return 0
 
 
-def calcByGroup(group, value):
-    if group == "Baixo":
-        return calOfRelevenceTriagle(1, 1, 1.5, value)
-    if group == "Medio":
-        return calOfRelevenceTriagle(1, 1.5, 2.0, value)
-    if group == "Alto":
-        return calOfRelevenceTriagle(1.65, 2.0, 2.0, value)
+def calcByGroup(group, value,func):
+    if func==1:
+        if group == "Baixo":
+            return calOfRelevenceTriagle(1, 1, 1.5, value)
+        elif group == "Medio":
+            return calOfRelevenceTriagle(1, 1.5, 2.0, value)
+        elif group == "Alto":
+            return calOfRelevenceTriagle(1.65, 2.0, 2.0, value)
+        else:
+            print("Group not Found->" + group)
     else:
-        print("Group not Found->" + group)
-
-def calcByGroupTra(group, value):
-    if group == "Baixo":
-        return calOfRelevenceoftrapeze(1, 1, 0.7, 1.5, value)
-    if group == "Medio":
-        return calOfRelevenceoftrapeze(1, 1.4, 1.6,2.0, value)
-    if group == "Alto":
-        return calOfRelevenceoftrapeze(1.5, 1.8, 2.0,2.0, value)
-    else:
-        print("Group not Found->" + group)
+        if group == "Baixo":
+            return calOfRelevenceoftrapeze(1, 1, 0.7, 1.5, value)
+        elif group == "Medio":
+            return calOfRelevenceoftrapeze(1, 1.4, 1.6,2.0, value)
+        elif group == "Alto":
+            return calOfRelevenceoftrapeze(1.5, 1.8, 2.0,2.0, value)
+        else:
+            print("Group not Found->" + group)
 
 
 def calcRelevance(value):
@@ -96,11 +102,11 @@ def calcRelevanceTra(value):
 
 
 
-def calcRelavanceOptionTwo():
-    value = raw_input("Type the interval: ")
-    value1 = raw_input("Type the interval: ")
-    step = raw_input("Type the step: ")
-    group = raw_input("Type the group: ")
+def calcRelavanceOptionTwo(func):
+    value = input("Type the interval: ")
+    value1 = input("Type the interval: ")
+    step = input("Type the step: ")
+    group = input("Type the group: ")
     if (isfloat(value) and isfloat(value1) and isfloat(step)):
         value = float(value)
         value1 = float(value1)
@@ -108,7 +114,7 @@ def calcRelavanceOptionTwo():
         results = list()
         array = np.arange(value, value1, step)
         for x in range(0, len(array)):
-            results.append(calcByGroup(group, array[x]))
+            results.append(calcByGroup(group, array[x],func))
 
         twodecimals = ["%.2f".strip("\'") % v for v in results]
         print(array)
@@ -116,10 +122,10 @@ def calcRelavanceOptionTwo():
 
 
 def calcRelavanceOptionTwoTra():
-    value = raw_input("Type the interval: ")
-    value1 = raw_input("Type the interval: ")
-    step = raw_input("Type the step: ")
-    group = raw_input("Type the group: ")
+    value = input("Type the interval: ")
+    value1 = input("Type the interval: ")
+    step = input("Type the step: ")
+    group = input("Type the group: ")
     if (isfloat(value) and isfloat(value1) and isfloat(step)):
         value = float(value)
         value1 = float(value1)
@@ -146,21 +152,24 @@ def isfloat(value):
 # Imprima na tela o intervalo  correspondente ao suporte do conjunto escolhido
 
 def printInterval():
-    group = raw_input("Type the group: ")
+    group = input("Type the group: ")
     if group == "Baixo":
-        supportBaixo()
+	 	 	print("[1 , 1.5)") 	      
     if group == "Medio":
-        supportMedio()
+       		 print("(1 , 2.0)") 
     if group == "Alto":
-        supportAlto()
+        if  enter== 1:
+        	print("(1.65 , 2.0)")
+        else:
+        	print("(1.5 , 2.0)") 
     else:
         print("Group not Found->" + group)
 
  #Imprima na tela o intervalo correspondente ao ncleo do conjunto escolhido
 
 def printCore():
-    group = raw_input("Type the group: ")
-    if str(group) == "Baixo":
+    group = input("Type the group: ")
+    if group == "Baixo":
         coreBaixo()
     if group == "Medio":
         coreMedio()
@@ -170,89 +179,8 @@ def printCore():
         print("Group not Found->" + group)
 
 
-def supportBaixo():
-    count = 1
-    suportInf = 0
-    suportSup = 0
-    trigSup = True
-    trigInf = True
 
-    while (count < 2):
-        count = count + 0.00001
-        x = calOfRelevenceTriagle(1, 1, 1.5, count)
-        if (x >= 0.999):
-            suportInf = count
-            break;
-
-    count = 1
-    while (count < 2):
-        count = count + 0.00001
-        x = calOfRelevenceTriagle(1, 1, 1.5, count)
-        if (x <= 0.001):
-            suportSup = count
-            break;
-
-    if suportInf > suportSup:
-        print("[" + str(suportSup) + " , " + str(suportInf) + "]")
-    else:
-        print("[" + str(suportInf) + " , " + str(suportSup) + "]")
-
-
-def supportMedio():
-    count = 1
-    suportInf = 0
-    suportSup = 0
-    trigSup = True
-    trigInf = True
-    while (count < 2):
-        count = count + 0.00001
-        x = calOfRelevenceTriagle(1, 1.5, 2.0, count)
-        if (x >= 0.999):
-            suportInf = count
-            break;
-
-    count = 1
-    while (count < 2):
-        count = count + 0.00001
-        x = calOfRelevenceTriagle(1, 1.5, 2.0, count)
-        if (x >= 0.001):
-            suportSup = count
-            break;
-
-    if suportInf > suportSup:
-        print("[" + str(suportSup) + " , " + str(suportInf) + "]")
-    else:
-        print("[" + str(suportInf) + " , " + str(suportSup) + "]")
-
-
-def supportAlto():
-    count = 1
-    suportInf = 0
-    suportSup = 0
-    trigSup = True
-    trigInf = True
-    while (count < 2):
-        count = count + 0.00001
-        x = calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
-        if (x >= 0.999):
-            suportInf = count
-            break;
-
-    count = 1
-    while (count < 2):
-        count = count + 0.00001
-        x = calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
-        if (x >= 0.001):
-            suportSup = count
-            break;
-
-    if suportInf > suportSup:
-        print("[" + str(suportSup) + " , " + str(suportInf) + "]")
-    else:
-        print("[" + str(suportInf) + " , " + str(suportSup) + "]")
-
-
-def coreBaixo():
+def coreBaixo(group, func):
     count = 1
     suportInf = 0
     suportSup = 0
@@ -260,12 +188,12 @@ def coreBaixo():
     trigInf = False
     while (count < 2):
         count = count + 0.0001
-        x = calOfRelevenceTriagle(1, 1, 1.5, count)
+        x = calcByGroup(group, count, func)
         if (0.99999 < x <= 1):
             suportInf = count
             while (count < 2):
                 count = count + 0.0001
-                x = calOfRelevenceTriagle(1, 1, 1.5, count)
+                x = calcByGroup(group, count, func)
                 if (0.99999 < x <= 1):
                     suportSup = count
                 else:
@@ -283,31 +211,8 @@ def coreBaixo():
         print("[" + str(suportInf) + " , " + str(suportSup) + "]")
 
 
-def coreMedio():
-    count = 1
-    suportInf = 0
-    suportSup = 0
-    trigSup = True
-    trigInf = False
-    while (count < 2):
-        count = count + 0.0001
-        x = calOfRelevenceTriagle(1, 1.5, 2.0, count)
-        if (0.99999 < x <= 1):
-            suportInf = count
-            while (count < 2):
-                count = count + 0.0001
-                x = calOfRelevenceTriagle(1, 1.5, 2.0, count)
-                if (0.99999 < x <= 1):
-                    suportSup = count
-                else:
-                    suportSup = count
-                    trigInf = True
-                    break;
 
-        if trigInf==True:
-            break;
-
-def coreAlto():
+def alfaCorte(alfa, group):
 
     count = 1
     suportInf = 0
@@ -316,42 +221,12 @@ def coreAlto():
     trigInf = False
     while (count < 2):
         count = count + 0.0001
-        x = calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
-        if (0.99999 < x <= 1):
-            suportInf = count
-            while (count < 2):
-                count = count + 0.0001
-                x =calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
-                if (0.99999 < x <= 1):
-                    suportSup = count
-                else:
-                    suportSup = count
-                    trigInf = True
-                    break;
-
-            if trigInf == True:
-                break;
-
-    if suportInf > suportSup:
-        print("[" + str(suportSup) + " , " + str(suportInf) + "]")
-    else:
-        print("[" + str(suportInf) + " , " + str(suportSup) + "]")
-
-def alfaCorte(alfa):
-
-    count = 1
-    suportInf = 0
-    suportSup = 0
-    trigSup = True
-    trigInf = False
-    while (count < 2):
-        count = count + 0.0001
-        x = calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
+        x = calcByGroup(group, count, func)
         if (x>= alfa):
             suportInf = count
             while (count < 2):
                 count = count + 0.0001
-                x =calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
+                x = calcByGroup(group, count, func)
                 if (x>= alfa):
                     suportSup = count
                 else:
