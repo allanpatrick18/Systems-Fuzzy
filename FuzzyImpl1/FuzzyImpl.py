@@ -25,11 +25,12 @@ def main():
                 calcRelavanceOptionTwo()
             else:
                 calcRelavanceOptionTwoTra()
-        if (value == 3):
+        if (value == str(3)):
             printInterval()
-        if (value == 4):
+        if (value == str(4)):
               printCore()
-
+        if (value == str(5)):
+            alfaCorte(0.8)
 
 def calOfRelevenceTriagle(a, m, b, x):
     if (x <= a):
@@ -37,7 +38,7 @@ def calOfRelevenceTriagle(a, m, b, x):
     elif (a < x <= m):
         return (x - a) / (m - a)
     elif (m < x <= b):
-        return (b - a) / (b - m)
+        return (b - x) / (b - m)
     else:
         return 0
 
@@ -47,10 +48,10 @@ def calOfRelevenceoftrapeze(a, m, n, b, x):
         return 0
     elif (a < x <= m):
         return (x - a) / (m - a)
-    elif (n < x <= m):
+    elif (n < x <= n):
         return 1
-    elif (m < x <= b):
-        return (b - a) / (b - m)
+    elif (n < x <= b):
+        return (b - x) / (b - n)
     else:
         return 0
 
@@ -158,13 +159,13 @@ def printInterval():
  #Imprima na tela o intervalo correspondente ao ncleo do conjunto escolhido
 
 def printCore():
-    group = raw_raw_input("Type the group: ")
+    group = raw_input("Type the group: ")
     if str(group) == "Baixo":
         coreBaixo()
     if group == "Medio":
-        supportMedio()
+        coreMedio()
     if group == "Alto":
-        supportAlto()
+        coreAlto()
     else:
         print("Group not Found->" + group)
 
@@ -256,20 +257,120 @@ def coreBaixo():
     suportInf = 0
     suportSup = 0
     trigSup = True
-    trigInf = True
+    trigInf = False
     while (count < 2):
-        count = count + 0.00001
-        x = calOfRelevenceTriagle(1, 1.5, 2.0, count)
-        if (x >= 0.999):
+        count = count + 0.0001
+        x = calOfRelevenceTriagle(1, 1, 1.5, count)
+        if (0.99999 < x <= 1):
             suportInf = count
             while (count < 2):
-                x = calOfRelevenceTriagle(1, 1.5, 2.0, count)
-                if (x < 0.999):
-                    trigSup = count
+                count = count + 0.0001
+                x = calOfRelevenceTriagle(1, 1, 1.5, count)
+                if (0.99999 < x <= 1):
+                    suportSup = count
+                else:
+                    suportSup = count
+                    trigInf = True
                     break;
+
+        if trigInf==True:
+            break;
+
+
+    if suportInf > suportSup:
+        print("[" + str(suportSup) + " , " + str(suportInf) + "]")
+    else:
+        print("[" + str(suportInf) + " , " + str(suportSup) + "]")
+
+
+def coreMedio():
+    count = 1
+    suportInf = 0
+    suportSup = 0
+    trigSup = True
+    trigInf = False
+    while (count < 2):
+        count = count + 0.0001
+        x = calOfRelevenceTriagle(1, 1.5, 2.0, count)
+        if (0.99999 < x <= 1):
+            suportInf = count
+            while (count < 2):
+                count = count + 0.0001
+                x = calOfRelevenceTriagle(1, 1.5, 2.0, count)
+                if (0.99999 < x <= 1):
+                    suportSup = count
+                else:
+                    suportSup = count
+                    trigInf = True
+                    break;
+
+        if trigInf==True:
+            break;
+
+def coreAlto():
+
+    count = 1
+    suportInf = 0
+    suportSup = 0
+    trigSup = True
+    trigInf = False
+    while (count < 2):
+        count = count + 0.0001
+        x = calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
+        if (0.99999 < x <= 1):
+            suportInf = count
+            while (count < 2):
+                count = count + 0.0001
+                x =calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
+                if (0.99999 < x <= 1):
+                    suportSup = count
+                else:
+                    suportSup = count
+                    trigInf = True
+                    break;
+
+            if trigInf == True:
                 break;
 
-    print("[" + str(suportSup) + " , " + str(suportInf) + "]")
+    if suportInf > suportSup:
+        print("[" + str(suportSup) + " , " + str(suportInf) + "]")
+    else:
+        print("[" + str(suportInf) + " , " + str(suportSup) + "]")
+
+def alfaCorte(alfa):
+
+    count = 1
+    suportInf = 0
+    suportSup = 0
+    trigSup = True
+    trigInf = False
+    while (count < 2):
+        count = count + 0.0001
+        x = calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
+        if (x>= alfa):
+            suportInf = count
+            while (count < 2):
+                count = count + 0.0001
+                x =calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
+                if (x>= alfa):
+                    suportSup = count
+                else:
+                    suportSup = count
+                    trigInf = True
+                    break;
+
+            if trigInf == True:
+                break;
+
+    if suportInf > suportSup:
+        print("[" + str(suportSup) + " , " + str(suportInf) + "]")
+    else:
+        print("[" + str(suportInf) + " , " + str(suportSup) + "]")
+
+
+
+
+
 
 
 if __name__ == '__main__':
