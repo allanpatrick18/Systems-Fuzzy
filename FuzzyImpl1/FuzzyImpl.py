@@ -1,7 +1,7 @@
 
 import numpy as np
 
-
+enter =0
 def main():
     print(" Welcome! \n  The Fuzzy Program\n")
     while (1):
@@ -9,14 +9,26 @@ def main():
         print("1- Calc one Relevance:")
         print("2- Calc interval Of Relance:")
         print("3- Print interval of suport by group:")
-        value = input()
+        print("4- Print interval of core by group:")
+        value = raw_input()
         if (value == str(1)):
-            value = input('The higher:')
-            calcRelevance(value)
+            value = raw_input('The higher:')
+            func = raw_input('Function:')
+            if func == 1:
+                calcRelevance(value)
+            else:
+                calcRelevanceTra(value)
+
         if (value == str(2)):
-            calcRelavanceOptionTwo()
-        if (value == str(3)):
+            func = raw_input('Function:')
+            if func == 1:
+                calcRelavanceOptionTwo()
+            else:
+                calcRelavanceOptionTwoTra()
+        if (value == 3):
             printInterval()
+        if (value == 4):
+              printCore()
 
 
 def calOfRelevenceTriagle(a, m, b, x):
@@ -53,6 +65,16 @@ def calcByGroup(group, value):
     else:
         print("Group not Found->" + group)
 
+def calcByGroupTra(group, value):
+    if group == "Baixo":
+        return calOfRelevenceoftrapeze(1, 1, 0.7, 1.5, value)
+    if group == "Medio":
+        return calOfRelevenceoftrapeze(1, 1.4, 1.6,2.0, value)
+    if group == "Alto":
+        return calOfRelevenceoftrapeze(1.5, 1.8, 2.0,2.0, value)
+    else:
+        print("Group not Found->" + group)
+
 
 def calcRelevance(value):
     if isfloat(value):
@@ -63,11 +85,21 @@ def calcRelevance(value):
         print("Baixo:" + str(uBaixo) + " Medio: " + str(uMedio) + " Alto: " + str(uAlto))
 
 
+def calcRelevanceTra(value):
+    if isfloat(value):
+        value = float(value)
+        uBaixo = calOfRelevenceoftrapeze(1, 1, 0.7, 1.5, value)
+        uMedio = calOfRelevenceoftrapeze(1, 1.4, 1.6,2.0, value)
+        uAlto = calOfRelevenceoftrapeze(1.5, 1.8, 2.0,2.0, value)
+        print("Baixo:" + str(uBaixo) + " Medio: " + str(uMedio) + " Alto: " + str(uAlto))
+
+
+
 def calcRelavanceOptionTwo():
-    value = input("Type the interval: ")
-    value1 = input("Type the interval: ")
-    step = input("Type the step: ")
-    group = input("Type the group: ")
+    value = raw_input("Type the interval: ")
+    value1 = raw_input("Type the interval: ")
+    step = raw_input("Type the step: ")
+    group = raw_input("Type the group: ")
     if (isfloat(value) and isfloat(value1) and isfloat(step)):
         value = float(value)
         value1 = float(value1)
@@ -76,6 +108,25 @@ def calcRelavanceOptionTwo():
         array = np.arange(value, value1, step)
         for x in range(0, len(array)):
             results.append(calcByGroup(group, array[x]))
+
+        twodecimals = ["%.2f".strip("\'") % v for v in results]
+        print(array)
+        print(twodecimals)
+
+
+def calcRelavanceOptionTwoTra():
+    value = raw_input("Type the interval: ")
+    value1 = raw_input("Type the interval: ")
+    step = raw_input("Type the step: ")
+    group = raw_input("Type the group: ")
+    if (isfloat(value) and isfloat(value1) and isfloat(step)):
+        value = float(value)
+        value1 = float(value1)
+        step = float(step)
+        results = list()
+        array = np.arange(value, value1, step)
+        for x in range(0, len(array)):
+            results.append(calcByGroupTra(group, array[x]))
 
         twodecimals = ["%.2f".strip("\'") % v for v in results]
         print(array)
@@ -94,7 +145,7 @@ def isfloat(value):
 # Imprima na tela o intervalo  correspondente ao suporte do conjunto escolhido
 
 def printInterval():
-    group = input("Type the group: ")
+    group = raw_input("Type the group: ")
     if group == "Baixo":
         supportBaixo()
     if group == "Medio":
@@ -104,13 +155,12 @@ def printInterval():
     else:
         print("Group not Found->" + group)
 
-
-# Imprima na tela o intervalo correspondente ao núcleo do conjunto escolhido
+ #Imprima na tela o intervalo correspondente ao ncleo do conjunto escolhido
 
 def printCore():
-    group = input("Type the group: ")
-    if group == "Baixo":
-        supportBaixo()
+    group = raw_raw_input("Type the group: ")
+    if str(group) == "Baixo":
+        coreBaixo()
     if group == "Medio":
         supportMedio()
     if group == "Alto":
@@ -217,9 +267,9 @@ def coreBaixo():
                 if (x < 0.999):
                     trigSup = count
                     break;
-            break;
+                break;
 
-        print("[" + str(suportSup) + " , " + str(suportInf) + "]")
+    print("[" + str(suportSup) + " , " + str(suportInf) + "]")
 
 
 if __name__ == '__main__':
