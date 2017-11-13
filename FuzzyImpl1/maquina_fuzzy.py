@@ -1,6 +1,11 @@
 
 import numpy as np
 
+from FuzzyImpl1.GrauMancha import GrauMancha
+from FuzzyImpl1.GrauSujeira import GrauSujeira
+
+m = GrauMancha()
+s = GrauSujeira()
 enter =0
 def main():
     print(" Welcome! \n  The Fuzzy Program\n")
@@ -10,25 +15,7 @@ def main():
         print("2- Calc interval Of Relance:")
         print("3- Print interval of suport by group:")
         print("4- Print interval of core by group:")
-        value = raw_input()
-        if (value == str(1)):
-            value = raw_input('The higher:')
-            func = raw_input('Function:')
-            if func == 1:
-                calcRelevance(value)
-            else:
-                calcRelevanceTra(value)
 
-        if (value == str(2)):
-            func = raw_input('Function:')
-            if func == 1:
-                calcRelavanceOptionTwo()
-            else:
-                calcRelavanceOptionTwoTra()
-        if (value == str(3)):
-            printInterval()
-        if (value == str(4)):
-              printCore()
 
 
 def calOfRelevenceTriagle(a, m, b, x):
@@ -41,57 +28,52 @@ def calOfRelevenceTriagle(a, m, b, x):
     else:
         return 0
 
-
-def calOfRelevenceoftrapeze(a, m, n, b, x):
-    if (x <= a):
-        return 0
-    elif (a < x <= m):
-        return (x - a) / (m - a)
-    elif (n < x <= n):
-        return 1
-    elif (n < x <= b):
-        return (b - x) / (b - n)
-    else:
-        return 0
-
-
 def calcByGroup(group, value):
     if group == "Baixo":
-        return calOfRelevenceTriagle(1, 1, 1.5, value)
+        return calOfRelevenceTriagle(0, 0, 50, value)
     if group == "Medio":
-        return calOfRelevenceTriagle(1, 1.5, 2.0, value)
+        return calOfRelevenceTriagle(0, 50, 100, value)
     if group == "Alto":
-        return calOfRelevenceTriagle(1.65, 2.0, 2.0, value)
+        return calOfRelevenceTriagle(50, 100, 100, value)
     else:
         print("Group not Found->" + group)
 
-def calcByGroupTra(group, value):
-    if group == "Baixo":
-        return calOfRelevenceoftrapeze(1, 1, 0.7, 1.5, value)
-    if group == "Medio":
-        return calOfRelevenceoftrapeze(1, 1.4, 1.6,2.0, value)
-    if group == "Alto":
-        return calOfRelevenceoftrapeze(1.5, 1.8, 2.0,2.0, value)
-    else:
-        print("Group not Found->" + group)
+
 
 
 def calcRelevance(value):
     if isfloat(value):
         value = float(value)
-        uBaixo = calOfRelevenceTriagle(1, 1, 1.5, value)
-        uMedio = calOfRelevenceTriagle(1, 1.5, 2.0, value)
-        uAlto = calOfRelevenceTriagle(1.65, 2.0, 2.0, value)
-        print("Baixo:" + str(uBaixo) + " Medio: " + str(uMedio) + " Alto: " + str(uAlto))
+        m.sm = calOfRelevenceTriagle(1, 1, 1.5, value)
+        m.mm = calOfRelevenceTriagle(1, 1.5, 2.0, value)
+        m.gm = calOfRelevenceTriagle(1.65, 2.0, 2.0, value)
+
+        s.ps = calOfRelevenceTriagle(1, 1, 1.5, value)
+        s.ms = calOfRelevenceTriagle(1, 1.5, 2.0, value)
+        s.gs = calOfRelevenceTriagle(1.65, 2.0, 2.0, value)
 
 
-def calcRelevanceTra(value):
-    if isfloat(value):
-        value = float(value)
-        uBaixo = calOfRelevenceoftrapeze(1, 1, 0.7, 1.5, value)
-        uMedio = calOfRelevenceoftrapeze(1, 1.4, 1.6,2.0, value)
-        uAlto = calOfRelevenceoftrapeze(1.5, 1.8, 2.0,2.0, value)
-        print("Baixo:" + str(uBaixo) + " Medio: " + str(uMedio) + " Alto: " + str(uAlto))
+def baseRegras():
+
+    if(s.ps > 0 and m.sm > 0):
+        return 'mc'
+    if(s.ms > 0 and m.sm > 0):
+        return 'c'
+    if(s.gs > 0 and m.sm > 0):
+        return 'm'
+    if(s.ps > 0 and m.mm > 0):
+        return 'm'
+    if(s.ms > 0 and m.mm > 0):
+        return 'm'
+    if(s.gs > 0 and m.mm > 0):
+        return 'l'
+    if(s.ps > 0 and m.gm > 0):
+        return 'l'
+    if(s.ms > 0 and m.gm > 0):
+        return 'l'
+    if(s.gs > 0 and m.gm > 0):
+        return 'ml'
+
 
 
 
