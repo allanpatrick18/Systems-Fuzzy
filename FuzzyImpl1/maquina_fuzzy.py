@@ -1,12 +1,21 @@
 
 import numpy as np
 
+import matplotlib.pyplot as plt
 from FuzzyImpl1.GrauMancha import GrauMancha
 from FuzzyImpl1.GrauSujeira import GrauSujeira
+from FuzzyImpl1.TempoLavagem import TempoLavagem
 
 m = GrauMancha()
 s = GrauSujeira()
+time  = TempoLavagem()
+saida = {'mc': [], 'c':[],'m':[],'l':[], 'ml':[]}
+ativacao = {'1': 0, '2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0}
+regras = {'1':'m','2':'mc','3':'m','4':'m','5':'m','6':'l','7':'l','8':'l','9':'ml'}
+conjuntosConsequentes = {'mc', 'c', 'm', 'l', 'ml'}
 enter =0
+x =60
+y=70
 def main():
     print(" Welcome! \n  The Fuzzy Program\n")
     while (1):
@@ -15,8 +24,12 @@ def main():
         print("2- Calc interval Of Relance:")
         print("3- Print interval of suport by group:")
         print("4- Print interval of core by group:")
-
-
+       # plotConjuntos()
+        pertineciaMacha(x)
+        pertinenciaSugeira(y)
+        baseRegras()
+        verificarMesmaSaidaAtivadas()
+        agregacaoRegras()
 
 def calOfRelevenceTriagle(a, m, b, x):
     if (x <= a):
@@ -29,11 +42,11 @@ def calOfRelevenceTriagle(a, m, b, x):
         return 0
 
 def calcByGroup(group, value):
-    if group == "Baixo":
+    if group == "sm":
         return calOfRelevenceTriagle(0, 0, 50, value)
-    if group == "Medio":
+    if group == "mm":
         return calOfRelevenceTriagle(0, 50, 100, value)
-    if group == "Alto":
+    if group == "gm":
         return calOfRelevenceTriagle(50, 100, 100, value)
     else:
         print("Group not Found->" + group)
@@ -41,78 +54,159 @@ def calcByGroup(group, value):
 
 
 
-def calcRelevance(value):
-    if isfloat(value):
-        value = float(value)
-        m.sm = calOfRelevenceTriagle(1, 1, 1.5, value)
-        m.mm = calOfRelevenceTriagle(1, 1.5, 2.0, value)
-        m.gm = calOfRelevenceTriagle(1.65, 2.0, 2.0, value)
 
-        s.ps = calOfRelevenceTriagle(1, 1, 1.5, value)
-        s.ms = calOfRelevenceTriagle(1, 1.5, 2.0, value)
-        s.gs = calOfRelevenceTriagle(1.65, 2.0, 2.0, value)
+def pertineciaMacha(value):
+
+    value = float(value)
+    m.sm = calOfRelevenceTriagle(1, 1, 50, value)
+    m.mm = calOfRelevenceTriagle(1, 50, 100, value)
+    m.gm = calOfRelevenceTriagle(50, 100, 100, value)
+
+def pertinenciaSugeira(value):
+    value = float(value)
+    s.ps = calOfRelevenceTriagle(1, 1, 50, value)
+    s.ms = calOfRelevenceTriagle(1, 50, 100, value)
+    s.gs = calOfRelevenceTriagle(50, 100, 100, value)
+
+def calcConsequente(group,value):
+        value = float(value)
+        if group == "mc":
+            return calOfRelevenceTriagle(1, 1, 10, value)
+        if group == "c":
+            return calOfRelevenceTriagle(1, 10, 25, value)
+        if group == "m":
+            return calOfRelevenceTriagle(10, 25, 40, value)
+        if group == "l":
+            return calOfRelevenceTriagle(25, 40, 60, value)
+        if group == "ml":
+            return calOfRelevenceTriagle(40, 60, 60, value)
+
+
+def compSupTmim(value, value1):
+    if(value>=value1):
+        return value1
+    else:
+        return value
+
+def plotConjuntos():
+    poligono_ps =[]
+    poligono_mm = []
+    poligono_gm = []
+    universodiscreto = np.arange(1,100,1)
+    for x in universodiscreto:
+        if(x<50):
+            poligono_ps.append(calcByGroup("sm",x))
+        if(50>x):
+            poligono_gm.append(calcByGroup("mm", x))
+
+        poligono_mm.append(calcByGroup("gm", x))
+
+    plt.plot(poligono_ps)
+    plt.plot(poligono_gm)
+    plt.plot(poligono_mm)
 
 
 def baseRegras():
 
     if(s.ps > 0 and m.sm > 0):
-        return 'mc'
+        saida['mc'].append(compSupTmim(s.ps,m.sm))
+
     if(s.ms > 0 and m.sm > 0):
-        return 'c'
+        saida['c'].append( compSupTmim(s.ms, m.sm))
+
     if(s.gs > 0 and m.sm > 0):
-        return 'm'
+        saida['m'].append(compSupTmim(s.gs, m.sm))
+
     if(s.ps > 0 and m.mm > 0):
-        return 'm'
+        saida['m'].append(compSupTmim(s.ps, m.mm))
+
     if(s.ms > 0 and m.mm > 0):
-        return 'm'
+        saida['m'].append(compSupTmim(s.ms, m.mm))
+
     if(s.gs > 0 and m.mm > 0):
-        return 'l'
+        saida['l'].append(compSupTmim(s.gs, m.mm))
+
     if(s.ps > 0 and m.gm > 0):
-        return 'l'
+        saida['l'].append(compSupTmim(s.ps, m.gm))
+
     if(s.ms > 0 and m.gm > 0):
-        return 'l'
+        saida['l'].append( compSupTmim(s.ms, m.gm))
+
     if(s.gs > 0 and m.gm > 0):
-        return 'ml'
+        saida['ml'].append( compSupTmim(s.ps, m.gm))
 
 
 
+def verificarMesmaSaidaAtivadas():
+    if(saida["m"]):
+        time.m = min(saida["m"])
+    if (saida["mc"]):
+        time.mc =min(saida["mc"])
+    if (saida["c"]):
+        time.c = min(saida["c"])
+    if (saida["l"]):
+        time.l = min(saida["l"])
+    if (saida["ml"]):
+        time.ml =min(saida["ml"])
 
-def calcRelavanceOptionTwo():
-    value = raw_input("Type the interval: ")
-    value1 = raw_input("Type the interval: ")
-    step = raw_input("Type the step: ")
-    group = raw_input("Type the group: ")
-    if (isfloat(value) and isfloat(value1) and isfloat(step)):
-        value = float(value)
-        value1 = float(value1)
-        step = float(step)
-        results = list()
-        array = np.arange(value, value1, step)
-        for x in range(0, len(array)):
-            results.append(calcByGroup(group, array[x]))
+def verificarMinimoMesmaSaida(value1,value2):
+     if(value1>=value2):
+        return value2
+     else:
+        return value2
 
-        twodecimals = ["%.2f".strip("\'") % v for v in results]
-        print(array)
-        print(twodecimals)
+def agregacaoRegras():
+    poligonos= []
+    for var in conjuntosConsequentes:
+        if (saida[var]):
+           poligonos.append(semanticaDaRegra(var, max(saida[var])))
+
+    total = [0.0]*len(poligonos[0])
+    for a in poligonos:
+        total = list(map(max, zip(total, a)))
+
+    return centroide(total)
+
+def maxAgregacao(value, value1):
+    if(value > value1):
+       return value
+    else:
+       return value1
+
+def semanticaDaRegra(conjunto, pertinecia):
+    poligono_discreto =[]
+    universodiscreto = np.arange(1,60,0.01)
+    for x in universodiscreto:
+              poligono_discreto.append(mandani(pertinecia,calcConsequente(conjunto,x)))
+
+    plt.plot(poligono_discreto)
+    # plt.plot(universodiscreto,poligono_discreto)
+    return poligono_discreto
 
 
-def calcRelavanceOptionTwoTra():
-    value = raw_input("Type the interval: ")
-    value1 = raw_input("Type the interval: ")
-    step = raw_input("Type the step: ")
-    group = raw_input("Type the group: ")
-    if (isfloat(value) and isfloat(value1) and isfloat(step)):
-        value = float(value)
-        value1 = float(value1)
-        step = float(step)
-        results = list()
-        array = np.arange(value, value1, step)
-        for x in range(0, len(array)):
-            results.append(calcByGroupTra(group, array[x]))
+def mandani(value1, value2):
+    if (value1 >= value2):
+        return value2
+    else:
+        return value1
 
-        twodecimals = ["%.2f".strip("\'") % v for v in results]
-        print(array)
-        print(twodecimals)
+
+def centroide(poligono):
+     i=0
+     nume=0.0
+     deno=0.0
+     for x in  poligono:
+         v = x*i
+         nume = nume+v
+         deno = deno+x
+         i=i+0.01
+     result= nume/deno
+     print(result)
+     plt.plot(poligono)
+     return result
+
+
+
 
 
 def isfloat(value):
@@ -122,202 +216,6 @@ def isfloat(value):
     except ValueError:
         print("Try a valid number Like 1 or 1.0")
         return False
-
-
-# Imprima na tela o intervalo  correspondente ao suporte do conjunto escolhido
-
-def printInterval():
-    group = raw_input("Type the group: ")
-    if group == "Baixo":
-        supportBaixo()
-    if group == "Medio":
-        supportMedio()
-    if group == "Alto":
-        supportAlto()
-    else:
-        print("Group not Found->" + group)
-
- #Imprima na tela o intervalo correspondente ao ncleo do conjunto escolhido
-
-def printCore():
-    group = raw_input("Type the group: ")
-    if str(group) == "Baixo":
-        coreBaixo()
-    if group == "Medio":
-        coreMedio()
-    if group == "Alto":
-        coreAlto()
-    else:
-        print("Group not Found->" + group)
-
-
-def supportBaixo():
-    count = 1
-    suportInf = 0
-    suportSup = 0
-    trigSup = True
-    trigInf = True
-
-    while (count < 2):
-        count = count + 0.00001
-        x = calOfRelevenceTriagle(1, 1, 1.5, count)
-        if (x >= 0.999):
-            suportInf = count
-            break;
-
-    count = 1
-    while (count < 2):
-        count = count + 0.00001
-        x = calOfRelevenceTriagle(1, 1, 1.5, count)
-        if (x <= 0.001):
-            suportSup = count
-            break;
-
-    if suportInf > suportSup:
-        print("[" + str(suportSup) + " , " + str(suportInf) + "]")
-    else:
-        print("[" + str(suportInf) + " , " + str(suportSup) + "]")
-
-
-def supportMedio():
-    count = 1
-    suportInf = 0
-    suportSup = 0
-    trigSup = True
-    trigInf = True
-    while (count < 2):
-        count = count + 0.00001
-        x = calOfRelevenceTriagle(1, 1.5, 2.0, count)
-        if (x >= 0.999):
-            suportInf = count
-            break;
-
-    count = 1
-    while (count < 2):
-        count = count + 0.00001
-        x = calOfRelevenceTriagle(1, 1.5, 2.0, count)
-        if (x >= 0.001):
-            suportSup = count
-            break;
-
-    if suportInf > suportSup:
-        print("[" + str(suportSup) + " , " + str(suportInf) + "]")
-    else:
-        print("[" + str(suportInf) + " , " + str(suportSup) + "]")
-
-
-def supportAlto():
-    count = 1
-    suportInf = 0
-    suportSup = 0
-    trigSup = True
-    trigInf = True
-    while (count < 2):
-        count = count + 0.00001
-        x = calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
-        if (x >= 0.999):
-            suportInf = count
-            break;
-
-    count = 1
-    while (count < 2):
-        count = count + 0.00001
-        x = calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
-        if (x >= 0.001):
-            suportSup = count
-            break;
-
-    if suportInf > suportSup:
-        print("[" + str(suportSup) + " , " + str(suportInf) + "]")
-    else:
-        print("[" + str(suportInf) + " , " + str(suportSup) + "]")
-
-
-def coreBaixo():
-    count = 1
-    suportInf = 0
-    suportSup = 0
-    trigSup = True
-    trigInf = False
-    while (count < 2):
-        count = count + 0.0001
-        x = calOfRelevenceTriagle(1, 1, 1.5, count)
-        if (0.99999 < x <= 1):
-            suportInf = count
-            while (count < 2):
-                count = count + 0.0001
-                x = calOfRelevenceTriagle(1, 1, 1.5, count)
-                if (0.99999 < x <= 1):
-                    suportSup = count
-                else:
-                    suportSup = count
-                    trigInf = True
-                    break;
-
-        if trigInf==True:
-            break;
-
-
-    if suportInf > suportSup:
-        print("[" + str(suportSup) + " , " + str(suportInf) + "]")
-    else:
-        print("[" + str(suportInf) + " , " + str(suportSup) + "]")
-
-
-def coreMedio():
-    count = 1
-    suportInf = 0
-    suportSup = 0
-    trigSup = True
-    trigInf = False
-    while (count < 2):
-        count = count + 0.0001
-        x = calOfRelevenceTriagle(1, 1.5, 2.0, count)
-        if (0.99999 < x <= 1):
-            suportInf = count
-            while (count < 2):
-                count = count + 0.0001
-                x = calOfRelevenceTriagle(1, 1.5, 2.0, count)
-                if (0.99999 < x <= 1):
-                    suportSup = count
-                else:
-                    suportSup = count
-                    trigInf = True
-                    break;
-
-        if trigInf==True:
-            break;
-
-def coreAlto():
-
-    count = 1
-    suportInf = 0
-    suportSup = 0
-    trigSup = True
-    trigInf = False
-    while (count < 2):
-        count = count + 0.0001
-        x = calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
-        if (0.99999 < x <= 1):
-            suportInf = count
-            while (count < 2):
-                count = count + 0.0001
-                x =calOfRelevenceTriagle(1.65, 2.0, 2.0, count)
-                if (0.99999 < x <= 1):
-                    suportSup = count
-                else:
-                    suportSup = count
-                    trigInf = True
-                    break;
-
-            if trigInf == True:
-                break;
-
-    if suportInf > suportSup:
-        print("[" + str(suportSup) + " , " + str(suportInf) + "]")
-    else:
-        print("[" + str(suportInf) + " , " + str(suportSup) + "]")
-
 
 
 
